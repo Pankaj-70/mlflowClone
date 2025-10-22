@@ -50,6 +50,8 @@ export async function listArtifacts(run_id: string) {
 export async function uploadArtifact(run_id: string, file: File) {
   const form = new FormData();
   form.append("file", file);
+  form.append("run_id", run_id);
+  console.log(form)
   const { data } = await API.post(`/artifacts/${run_id}/upload`, form, {
     headers: { "Content-Type": "multipart/form-data" },
   });

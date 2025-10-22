@@ -58,3 +58,12 @@ class MetricOut(BaseModel):
     timestamp: datetime
     class Config:
         from_attributes = True
+
+
+# artifacts
+class ArtifactCreate(BaseModel):
+    run_id: int
+    filname: str
+    path: str
+    filetype: Optional[str] = None
+    size_bytes: Optional[int] = None

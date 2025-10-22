@@ -60,3 +60,17 @@ def log_metric(db: Session, data: schemas.MetricCreate):
 def list_metrics(db: Session, run_id: str):
     stmt = select(models.Metric).where(models.Metric.run_id == run_id)
     return db.scalars(stmt).all()
+
+
+# ---------- Artifacts ----------
+def list_artifacts(db: Session, run_id: str):
+    stmt = select(models.Artifact).where(models.Artifact.run_id == run_id)
+    return db.scalars(stmt).all()
+
+def create_artifact(db: Session, run_id: int, filename: str, path: str, filetype: str, size_bytes: int):
+    artifact = models.Artifact(run_id=run_id, filename=filename, path=path, filetype=filetype, size_bytes=size_bytes)
+    db.add(artifact)
+    db.commit()
+    db.refresh(artifact)
+    return artifact
+

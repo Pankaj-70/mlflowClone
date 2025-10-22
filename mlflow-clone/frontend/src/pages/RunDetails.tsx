@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   getMetrics,
@@ -24,19 +24,17 @@ export default function RunDetails() {
   const [artifacts, setArtifacts] = useState<any[]>([]);
   const [file, setFile] = useState<File | null>(null);
 
-  // load metrics
-  const loadMetrics = async () => {
-    if (!id) return;
-    const data = await getMetrics(id);
-    setMetrics(data);
-  };
+  const loadMetrics = useCallback(async () => {
+  if (!id) return;
+  const data = await getMetrics(id);
+  setMetrics(data);
+}, [id]);
 
-  // load artifacts
-  const loadArtifacts = async () => {
-    if (!id) return;
-    const data = await listArtifacts(id);
-    setArtifacts(data);
-  };
+const loadArtifacts = useCallback(async () => {
+  if (!id) return;
+  const data = await listArtifacts(id);
+  setArtifacts(data);
+}, [id]);
 
   useEffect(() => {
     loadMetrics();
@@ -133,19 +131,30 @@ export default function RunDetails() {
       <section>
         <h2 className="text-xl font-semibold mb-2">Artifacts</h2>
 
-        <div className="flex items-center gap-2 mb-4">
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="text-sm"
-          />
+      <div className="flex items-center gap-3 mb-6 p-3 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:border-gray-400 transition">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="hidden"
+            />
+            <span className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition">
+              Choose File
+            </span>
+            {file && (
+              <span className="text-gray-700 text-sm font-medium truncate max-w-[200px]">
+                {file.name}
+              </span>
+            )}
+          </label>
           <button
             onClick={handleUpload}
-            className="bg-black text-white rounded p-2 text-sm hover:bg-gray-800"
+            className="bg-black text-white cursor-pointer rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-600 transition"
           >
             Upload
           </button>
         </div>
+
 
         {artifacts.length === 0 && (
           <div className="text-gray-500 text-sm">No artifacts uploaded yet.</div>
@@ -165,7 +174,7 @@ export default function RunDetails() {
                 <tr key={a.id} className="border-b hover:bg-gray-50">
                   <td className="p-2">{a.filename}</td>
                   <td className="p-2">{(a.size_bytes / 1024).toFixed(1)}</td>
-                  <td className="p-2">{a.mimetype}</td>
+                  <td className="p-2">{a.filetype}</td>
                 </tr>
               ))}
             </tbody>

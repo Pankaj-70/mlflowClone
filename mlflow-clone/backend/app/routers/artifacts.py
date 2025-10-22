@@ -22,9 +22,9 @@ def upload_artifact(run_id: str, file: UploadFile = File(...), db: Session = Dep
     row = crud.create_artifact(
         db,
         run_id=run_id,
-        path=str(dest.relative_to(STORAGE_ROOT.parent)),
         filename=file.filename,
-        mimetype=file.content_type,
+        path=str(dest.relative_to(STORAGE_ROOT.parent)),
+        filetype=file.content_type,
         size_bytes=dest.stat().st_size,
     )
     return {"ok": True, "artifact_id": row.id, "filename": row.filename}
